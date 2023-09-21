@@ -1,0 +1,92 @@
+from robot_control_class import RobotControl
+import time
+import math
+
+class escape:
+
+    def __init__(self):
+        self.robotcontrol = RobotControl()
+    
+    def left(self):
+        
+        print("Turning LEFT")
+        self.robotcontrol.rotate(-90)
+
+
+    def right(self):
+
+        print("Turning RIGHT")
+        self.robotcontrol.rotate(90)
+
+    
+    def motor(self):
+      
+      speed = 0.25
+      time = 1
+      
+      print("[COMMAND] : motor")
+      self.robotcontrol.move_straight_time("forward", speed, time)
+      print("[COMMAND] : motor end")
+
+    def drive(self):
+
+      centerLaser = 360
+      sideLaser2 = 150
+      sideLaser1 = 0
+
+      radius = 0.7
+      driver = radius / math.cos(math.pi * sideLaser2 / 720)
+      print("Driver Distanse %.4f" %(driver))
+
+      framing = 10
+      infinity = 10
+
+      while True:
+        
+        laserValue = self.robotcontrol.get_laser_full()
+        print("-------------------------------------------------------------")
+        print("[CNETER LASER] %.4f / [LEFT2 LASER] %.4f / [RIGHT2 LASER] %.4f" %(laserValue[centerLaser], laserValue[719-sideLaser2], laserValue[sideLaser2]))
+        print("LEFT1 LASER] %.4f / [RIGHT1 LASER] %.4f" %(laserValue[719-sideLaser1], laserValue[sideLaser1]))
+        print("-------------------------------------------------------------")
+
+        if (laserValue[centerLaser] < radius) or (infinity <= laserValue[sideLaser1] and infinity <= laserValue[719 - sideLaser1]):
+
+          print("[CENTER LASER] Wall Detected")
+          self.robotcontrol.stop_robot()
+          break
+
+        elif laserValue[sideLaser2] < driver:
+
+          print("[RIGHT2 LASER] Wall Detected")
+          self.robotcontrol.rotate(-framing)
+          self.motor()
+
+        elif laserValue[719-sideLaser2] < driver:
+
+          print("[LEFT2 LASER] Wall Detected")
+          self.robotcontrol.rotate(framing)
+
+        elif laserValue[sideLaser1] < radius:
+
+          print("[RIGHT1 LASER] Wall Detected")
+          self.robotcontrol.rotate(-framing*2)
+          self.motor()
+
+        elif laserValue[719-sideLaser1] < radius:
+
+          print("[LEFT1 LASER] Wall Detected")
+          self.robotcontrol.rotate(framing*2)
+
+        self.robotcontrol.move_straight()
+
+# action START
+action = escape()
+action.drive()
+action.right()
+action.drive()
+action.right()
+action.drive()
+action.left()
+action.drive()
+
+print("Escape Completed => Program Finished")
