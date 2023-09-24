@@ -63,13 +63,13 @@ class escape:
           print("[LEFT2 LASER] Wall Detected")
           self.robotcontrol.rotate(framing)
 
-        elif laserValue[sideLaser1] < radius:                                   #right1 laser detected wall : direction of robot is worse than above case
+        elif laserValue[sideLaser1] < radius-0.1:                                   #right1 laser detected wall : direction of robot is worse than above case
 
           print("[RIGHT1 LASER] Wall Detected")
           self.robotcontrol.rotate(-framing*2)                                  #correcting direction of the robot : two times larger than above case
           self.motor()
 
-        elif laserValue[719-sideLaser1] < radius:
+        elif laserValue[719-sideLaser1] < radius-0.1:
 
           print("[LEFT1 LASER] Wall Detected")
           self.robotcontrol.rotate(framing*2)
